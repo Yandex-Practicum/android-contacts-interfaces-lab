@@ -13,10 +13,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatCallback;
-import androidx.core.util.Consumer;
-
-import com.bumptech.glide.manager.LifecycleListener;
 
 import ru.yandex.practicum.contacts.databinding.SplashActivityBinding;
 import ru.yandex.practicum.contacts.presentation.main.MainActivity;
