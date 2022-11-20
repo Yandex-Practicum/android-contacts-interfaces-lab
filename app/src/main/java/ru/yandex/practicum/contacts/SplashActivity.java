@@ -13,6 +13,10 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatCallback;
+import androidx.core.util.Consumer;
+
+import com.bumptech.glide.manager.LifecycleListener;
 
 import ru.yandex.practicum.contacts.databinding.SplashActivityBinding;
 import ru.yandex.practicum.contacts.presentation.main.MainActivity;
@@ -33,7 +37,13 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = SplashActivityBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        binding.settingsButton.setOnClickListener(view -> navigateToSettings());
+        binding.settingsButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                navigateToMain();
+            }
+        } );
 
         if (ContextUtils.hasContactPermissions(this)) {
             navigateToMain();
