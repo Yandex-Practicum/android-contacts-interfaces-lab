@@ -25,6 +25,11 @@ public class ContactUiMapper {
                 phone,
                 contact.getPhotoUri(),
                 MergedContactUtils.getContactTypes(contact)
-        );
+        ) {
+            @Override
+            public boolean theSameAs(ContactUi contactUi) {
+                return false;
+            }
+        };
     }
 }
