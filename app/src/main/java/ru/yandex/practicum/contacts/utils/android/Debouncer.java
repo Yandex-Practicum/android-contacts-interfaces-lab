@@ -3,9 +3,6 @@ package ru.yandex.practicum.contacts.utils.android;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-
-import ru.yandex.practicum.contacts.presentation.main.MainViewModel;
-
 import androidx.annotation.NonNull;
 
 public class Debouncer {
@@ -13,10 +10,10 @@ public class Debouncer {
     private static final int MESSAGE_ID = 1;
     private static final int DELAY = 500;
 
-    private final MainViewModel viewModel;
+    private final OnDebounceListener listener;
 
-    public Debouncer(MainViewModel viewModel) {
-        this.viewModel = viewModel;
+    public Debouncer(OnDebounceListener listener) {
+        this.listener = listener;
     }
 
     private final Handler handler = new Handler(Looper.getMainLooper()) {
@@ -30,15 +27,15 @@ public class Debouncer {
         }
     };
 
-    // метод отправляет сообщение, для обновления данных с задержкой в 500мс
+    // метод отправляет сообщение для обновления данных с задержкой в 500мс
     public void updateValue(String value) {
         final Message message = Message.obtain(handler, MESSAGE_ID, value);
         handler.removeMessages(MESSAGE_ID);
         handler.sendMessageDelayed(message, DELAY);
     }
 
-    // выполнить действие по прошествии 500мс, если нового события в течении 500мс не было отправлено
+    // выполнить действие по прошествии 500мс
     private void doOnDebounce() {
-        viewModel.search();
+        listener.onDebounce();
     }
 }

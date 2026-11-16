@@ -32,7 +32,8 @@ public class FilterContactTypeDialogFragment extends BaseBottomSheetDialogFragme
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         iniViewModel();
-        adapter = new FilterContactTypeAdapter(viewModel::onFilterTypeItemClick);
+        adapter = new FilterContactTypeAdapter();
+        adapter.setClickListener(viewModel::onFilterTypeItemClick);
         binding.recycler.setAdapter(adapter);
 
         final DividerItemDecoration decoration = new DividerItemDecoration(
@@ -50,7 +51,7 @@ public class FilterContactTypeDialogFragment extends BaseBottomSheetDialogFragme
     }
 
     private void updateFilterContactTypes(List<FilterContactTypeUi> filterTypes) {
-        adapter.setItems(filterTypes);
+        adapter.submitList(filterTypes);
     }
 
     private void updateState(FilterContactTypeViewModel.UiState state) {
@@ -67,8 +68,7 @@ public class FilterContactTypeDialogFragment extends BaseBottomSheetDialogFragme
         fragment.setArguments(createBundle(selectedContactTypes));
         return fragment;
     }
-
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"deprecation", "unchecked"})
     public static Set<ContactType> from(@Nullable Bundle bundle) {
         if (bundle == null) {
             return Collections.emptySet();

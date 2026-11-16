@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import ru.yandex.practicum.contacts.presentation.base.BaseBottomSheetViewModel;
 import ru.yandex.practicum.contacts.presentation.sort.model.SortType;
+import ru.yandex.practicum.contacts.presentation.sort.model.SortTypeUI;
 
 public class SortViewModel extends BaseBottomSheetViewModel {
 
@@ -67,7 +68,7 @@ public class SortViewModel extends BaseBottomSheetViewModel {
         uiStateLiveDate.setValue(uiState);
     }
 
-    static class UiState {
+    public static class UiState {
         public boolean isApplyEnable = false;
         @Nullable public SortType newSelectedSortType = null;
     }

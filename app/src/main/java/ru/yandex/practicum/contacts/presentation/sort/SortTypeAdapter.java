@@ -5,38 +5,31 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.AdapterListUpdateCallback;
-import androidx.recyclerview.widget.AsyncDifferConfig;
 import androidx.recyclerview.widget.AsyncListDiffer;
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 import ru.yandex.practicum.contacts.R;
 import ru.yandex.practicum.contacts.databinding.ItemSortBinding;
+import ru.yandex.practicum.contacts.presentation.base.BaseListDiffCallback;
 import ru.yandex.practicum.contacts.presentation.sort.model.SortType;
+import ru.yandex.practicum.contacts.presentation.sort.model.SortTypeUI;
 
 public class SortTypeAdapter extends RecyclerView.Adapter<SortTypeAdapter.ViewHolder> {
 
     private final AsyncListDiffer<SortTypeUI> differ = new AsyncListDiffer<>(
-            new AdapterListUpdateCallback(this),
-            new AsyncDifferConfig.Builder<>(new ListDiffCallback()).build()
+            this,
+            new BaseListDiffCallback<SortTypeUI>()
     );
 
-    private final Consumer<SortTypeUI> clickListener;
-
-    public SortTypeAdapter(Consumer<SortTypeUI> clickListener) {
-        this.clickListener = clickListener;
-    }
+    private OnClickListener clickListener;
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        final ItemSortBinding binding = ItemSortBinding.inflate(inflater, parent, false);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        ItemSortBinding binding = ItemSortBinding.inflate(inflater, parent, false);
         return new ViewHolder(binding, clickListener);
     }
 
@@ -50,61 +43,48 @@ public class SortTypeAdapter extends RecyclerView.Adapter<SortTypeAdapter.ViewHo
         return differ.getCurrentList().size();
     }
 
-    public void setItems(List<SortTypeUI> items) {
-        differ.submitList(items);
+    public void submitList(List<SortTypeUI> list) {
+        differ.submitList(list);
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    public void setClickListener(OnClickListener clickListener) {
+        this.clickListener = clickListener;
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
         private final ItemSortBinding binding;
-
         private SortTypeUI data;
 
-        public ViewHolder(@NonNull ItemSortBinding binding, Consumer<SortTypeUI> clickListener) {
+        public ViewHolder(@NonNull ItemSortBinding binding, OnClickListener clickListener) {
             super(binding.getRoot());
             this.binding = binding;
-            this.binding.getRoot().setOnClickListener(v -> clickListener.accept(data));
+
+            itemView.setOnClickListener(v -> {
+                if (clickListener != null && data != null) {
+                    clickListener.onSortTypeItemClick(data);
+                }
+            });
         }
 
         public void bind(SortTypeUI data) {
             this.data = data;
-            final int sortResId = resource(data.getSortType());
-            binding.text.setText(sortResId);
+            binding.text.setText(getStringRes(data.getSortType()));
             binding.selected.setVisibility(data.isSelected() ? View.VISIBLE : View.GONE);
         }
 
-        private int resource(SortType sortType) {
+        private int getStringRes(SortType sortType) {
             switch (sortType) {
-                case BY_NAME:
-                    return R.string.sort_by_name;
-                case BY_NAME_REVERSED:
-                    return R.string.sort_by_name_reversed;
                 case BY_SURNAME:
                     return R.string.sort_by_surname;
-                case BY_SURNAME_REVERSED:
-                    return R.string.sort_by_surname_reversed;
+                case BY_NAME:
                 default:
-                    throw new IllegalArgumentException("Not supported SortType");
+                    return R.string.sort_by_name;
             }
         }
     }
 
-    static class ListDiffCallback extends DiffUtil.ItemCallback<SortTypeUI> {
-
-        @Override
-        public boolean areItemsTheSame(@NonNull SortTypeUI oldItem, @NonNull SortTypeUI newItem) {
-            return oldItem.getSortType() == newItem.getSortType();
-        }
-
-        @Override
-        public boolean areContentsTheSame(@NonNull SortTypeUI oldItem, @NonNull SortTypeUI newItem) {
-            return oldItem.equals(newItem);
-        }
-
-        @Nullable
-        @Override
-        public Object getChangePayload(@NonNull SortTypeUI oldItem, @NonNull SortTypeUI newItem) {
-            return newItem;
-        }
+    public interface OnClickListener {
+        void onSortTypeItemClick(SortTypeUI sortType);
     }
 }

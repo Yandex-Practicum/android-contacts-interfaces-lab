@@ -14,6 +14,7 @@ import java.util.Objects;
 import ru.yandex.practicum.contacts.R;
 import ru.yandex.practicum.contacts.presentation.base.BaseBottomSheetDialogFragment;
 import ru.yandex.practicum.contacts.presentation.sort.model.SortType;
+import ru.yandex.practicum.contacts.presentation.sort.model.SortTypeUI;
 
 public class SortDialogFragment extends BaseBottomSheetDialogFragment<SortViewModel> {
 
@@ -30,7 +31,8 @@ public class SortDialogFragment extends BaseBottomSheetDialogFragment<SortViewMo
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         iniViewModel();
-        adapter = new SortTypeAdapter(viewModel::onSortTypeItemClick);
+        adapter = new SortTypeAdapter();
+        adapter.setClickListener(viewModel::onSortTypeItemClick);
         binding.recycler.setAdapter(adapter);
 
         final DividerItemDecoration decoration = new DividerItemDecoration(requireActivity(), DividerItemDecoration.VERTICAL);
@@ -46,9 +48,6 @@ public class SortDialogFragment extends BaseBottomSheetDialogFragment<SortViewMo
         viewModel.init(defaultSortType);
     }
 
-    private void updateSortTypes(List<SortTypeUI> sortTypes) {
-        adapter.setItems(sortTypes);
-    }
 
     private void updateState(SortViewModel.UiState state) {
         binding.applyButton.setEnabled(state.isApplyEnable);
@@ -65,6 +64,7 @@ public class SortDialogFragment extends BaseBottomSheetDialogFragment<SortViewMo
         return fragment;
     }
 
+    @SuppressWarnings("deprecation")
     public static SortType from(@Nullable Bundle bundle) {
         if (bundle == null) {
             return SortType.BY_NAME;
@@ -76,5 +76,8 @@ public class SortDialogFragment extends BaseBottomSheetDialogFragment<SortViewMo
         final Bundle bundle = new Bundle();
         bundle.putSerializable(ARG_SELECTED_SORT_TYPE, sortType);
         return bundle;
+    }
+    private void updateSortTypes(List<SortTypeUI> sortTypes) {
+        adapter.submitList(sortTypes);
     }
 }
